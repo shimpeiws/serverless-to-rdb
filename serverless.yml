@@ -16,6 +16,12 @@ provider:
     subnetIds:
       - YOUR_SUBNET_ID_01
       - YOUR_SUBNET_ID_02
+  environment:
+    DB_HOST: ${env:DB_HOST}
+    DB_PORT: ${env:DB_PORT}
+    DB_USER: ${env:DB_USER}
+    DB_PASS: ${env:DB_PASS}
+    DB_DATABASE: ${env:DB_DATABASE}
 
 functions:
   hello:
@@ -24,3 +30,21 @@ functions:
       - http:
           method: get
           path: hello
+
+resources:
+  Resources:
+    AWSLambdaVPCAccessExecutionRole:
+      Type: AWS::IAM::ManagedPolicy
+      Properties:
+        Description: Creating policy for vpc connetion.
+        Roles:
+          - { 'Ref': 'IamRoleLambdaExecution' }
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - ec2:CreateNetworkInterface
+                - ec2:DescribeNetworkInterfaces
+                - ec2:DeleteNetworkInterface
+              Resource: '*'
